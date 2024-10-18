@@ -124,7 +124,7 @@ function TableOfContents(props: TableOfContentsProps) {
           position: "sticky"
         }}
       >
-        <ScrollContainer>
+        <div>
           <Section
             title={strings.toc()}
             button={
@@ -135,48 +135,48 @@ function TableOfContents(props: TableOfContentsProps) {
                   if (activeSessionId) {
                     toggleTableOfContents(activeSessionId);
                   }
-                }}
-                size={18}
+                }} size={18}
                 sx={{ mr: 1, cursor: "pointer" }}
               />
             }
-          >
-            <Flex sx={{ mt: 2, flexDirection: "column" }}>
-              {tableOfContents.length <= 0 ? (
-                <Text
-                  variant="body"
+          />
+        </div>
+        <ScrollContainer>
+          <Flex sx={{ mt: 2, flexDirection: "column" }}>
+            {tableOfContents.length <= 0 ? (
+              <Text
+                variant="body"
+                sx={{
+                  pl: 1
+                }}
+              >
+                {strings.noHeadingsFound()}.
+              </Text>
+            ) : (
+              tableOfContents.map((t) => (
+                <Button
+                  variant="menuitem"
+                  key={t.id}
                   sx={{
-                    pl: 1
+                    textAlign: "left",
+                    paddingLeft: `${(t.level * 5 + (t.level - 1) * 5) * 2}px`,
+                    py: 1,
+                    pr: 1,
+                    borderLeft: "5px solid transparent",
+                    borderColor: active.includes(t.id)
+                      ? "accent-selected"
+                      : "transparent",
+                    color: active.includes(t.id)
+                      ? "accent-selected"
+                      : "paragraph"
                   }}
+                  onClick={() => scrollIntoViewById(t.id)}
                 >
-                  {strings.noHeadingsFound()}.
-                </Text>
-              ) : (
-                tableOfContents.map((t) => (
-                  <Button
-                    variant="menuitem"
-                    key={t.id}
-                    sx={{
-                      textAlign: "left",
-                      paddingLeft: `${(t.level * 5 + (t.level - 1) * 5) * 2}px`,
-                      py: 1,
-                      pr: 1,
-                      borderLeft: "5px solid transparent",
-                      borderColor: active.includes(t.id)
-                        ? "accent-selected"
-                        : "transparent",
-                      color: active.includes(t.id)
-                        ? "accent-selected"
-                        : "paragraph"
-                    }}
-                    onClick={() => scrollIntoViewById(t.id)}
-                  >
-                    {t.title}
-                  </Button>
-                ))
-              )}
-            </Flex>
-          </Section>
+                  {t.title}
+                </Button>
+              ))
+            )}
+          </Flex>
         </ScrollContainer>
       </ScopedThemeProvider>
     </AnimatedFlex>
