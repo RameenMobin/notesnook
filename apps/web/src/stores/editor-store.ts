@@ -166,9 +166,10 @@ class EditorStore extends BaseStore<EditorStore> {
 
   arePropertiesVisible = false;
   documentPreview?: DocumentPreview;
-  isTOCVisible = false;
   editorMargins = Config.get("editor:margins", true);
   history: string[] = [];
+  tocVisibility: { [key: string]: boolean } = {}; // New state for TOC visibility per session
+
 
   getSession = <T extends SessionType[]>(id: string, types?: T) => {
     return this.get().sessions.find(
@@ -228,10 +229,10 @@ class EditorStore extends BaseStore<EditorStore> {
           const noteId = isDeleted(item)
             ? null
             : item.type === "note"
-            ? item.id
-            : item.type === "tiptap"
-            ? item.noteId
-            : null;
+              ? item.id
+              : item.type === "tiptap"
+                ? item.noteId
+                : null;
           if (noteId && session.id !== noteId && session.note.id !== noteId)
             continue;
           if (isDeleted(item) || isTrashItem(item)) clearIds.push(session.id);
@@ -832,7 +833,7 @@ class EditorStore extends BaseStore<EditorStore> {
                   !!s.content?.conflicted &&
                   s.content.conflicted.id === currentSession.note.contentId &&
                   s.content.conflicted.dateEdited ===
-                    currentSession.note.dateEdited
+                  currentSession.note.dateEdited
               );
               if (!session || !session.content?.conflicted) return;
               session.content.conflicted.data = partial.content!.data;
@@ -929,17 +930,18 @@ class EditorStore extends BaseStore<EditorStore> {
   toggleProperties = (toggleState?: boolean) => {
     this.set(
       (state) =>
-        (state.arePropertiesVisible =
-          toggleState !== undefined ? toggleState : !state.arePropertiesVisible)
+      (state.arePropertiesVisible =
+        toggleState !== undefined ? toggleState : !state.arePropertiesVisible)
     );
   };
 
-  toggleTableOfContents = (toggleState?: boolean) => {
-    this.set(
-      (state) =>
-        (state.isTOCVisible =
-          toggleState !== undefined ? toggleState : !state.isTOCVisible)
-    );
+  toggleTableOfContents = (sessionId: string, toggleState?: boolean) => {
+    this.set((state) => {
+      state.tocVisibility[sessionId] =
+        toggleState !== undefined
+          ? toggleState
+          : !state.tocVisibility[sessionId];
+    });
   };
 
   toggleEditorMargins = (toggleState?: boolean) => {
@@ -958,6 +960,7 @@ const useEditorStore = createPersistedStore(EditorStore, {
     activeSessionId: state.activeSessionId,
     arePropertiesVisible: state.arePropertiesVisible,
     editorMargins: state.editorMargins,
+    tocVisibility: state.tocVisibility,
     sessions: state.sessions.reduce((sessions, session) => {
       sessions.push({
         id: session.id,
@@ -969,9 +972,9 @@ const useEditorStore = createPersistedStore(EditorStore, {
         note:
           "note" in session
             ? {
-                id: session.note.id,
-                title: session.note.title
-              }
+              id: session.note.id,
+              title: session.note.title
+            }
             : undefined
       } as EditorSession);
 

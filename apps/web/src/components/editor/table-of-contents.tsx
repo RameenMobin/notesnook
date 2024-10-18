@@ -102,10 +102,12 @@ function TableOfContents(props: TableOfContentsProps) {
         display: "flex",
         position: "absolute",
         right: 0,
-        top: TITLE_BAR_HEIGHT,
+        top: 37,
         zIndex: 999,
         height: "100%",
-        width: "300px",
+        width: "auto",
+        minWidth: "200px",
+        maxWidth: "300px",
         borderLeft: "1px solid",
         borderLeftColor: "border"
       }}
@@ -118,7 +120,8 @@ function TableOfContents(props: TableOfContentsProps) {
           bg: "background",
           overflowY: "hidden",
           overflowX: "hidden",
-          flexDirection: "column"
+          flexDirection: "column",
+          position: "sticky"
         }}
       >
         <ScrollContainer>
@@ -127,7 +130,12 @@ function TableOfContents(props: TableOfContentsProps) {
             button={
               <ArrowLeft
                 data-test-id="toc-close"
-                onClick={() => toggleTableOfContents(false)}
+                onClick={() => {
+                  const { toggleTableOfContents, activeSessionId } = useEditorStore.getState();
+                  if (activeSessionId) {
+                    toggleTableOfContents(activeSessionId);
+                  }
+                }}
                 size={18}
                 sx={{ mr: 1, cursor: "pointer" }}
               />
@@ -150,7 +158,7 @@ function TableOfContents(props: TableOfContentsProps) {
                     key={t.id}
                     sx={{
                       textAlign: "left",
-                      paddingLeft: `${t.level * 5 + (t.level - 1) * 5}px`,
+                      paddingLeft: `${(t.level * 5 + (t.level - 1) * 5) * 2}px`,
                       py: 1,
                       pr: 1,
                       borderLeft: "5px solid transparent",

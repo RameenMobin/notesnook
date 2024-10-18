@@ -169,7 +169,12 @@ export function EditorActionBar() {
         activeSession.type !== "locked" &&
         activeSession.type !== "diff" &&
         activeSession.type !== "conflicted",
-      onClick: () => useEditorStore.getState().toggleTableOfContents()
+      onClick: () => {
+        const { toggleTableOfContents, activeSessionId } = useEditorStore.getState();
+        if (activeSessionId) {
+          toggleTableOfContents(activeSessionId);
+        }
+      },
     },
     {
       title: strings.search(),
@@ -433,10 +438,10 @@ function Tab(props: TabProps) {
       ? Lock
       : Unlock
     : type === "readonly"
-    ? Readonly
-    : type === "deleted"
-    ? Trash
-    : Note;
+      ? Readonly
+      : type === "deleted"
+        ? Trash
+        : Note;
   const { attributes, listeners, setNodeRef, transform, transition, active } =
     useSortable({ id });
 

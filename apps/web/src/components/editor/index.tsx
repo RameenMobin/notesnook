@@ -115,10 +115,12 @@ export default function TabsView() {
   const sessions = useEditorStore((store) => store.sessions);
   const documentPreview = useEditorStore((store) => store.documentPreview);
   const activeSessionId = useEditorStore((store) => store.activeSessionId);
+  const tocVisibility = useEditorStore((store) => store.tocVisibility);
+  const isTOCVisible = tocVisibility[activeSessionId as any] ?? false;
+
   const arePropertiesVisible = useEditorStore(
     (store) => store.arePropertiesVisible
   );
-  const isTOCVisible = useEditorStore((store) => store.isTOCVisible);
   const [dropRef, overlayRef] = useDragOverlay();
 
   return (
@@ -228,10 +230,10 @@ function EditorView({
   session
 }: {
   session:
-    | DefaultEditorSession
-    | NewEditorSession
-    | ReadonlyEditorSession
-    | DeletedEditorSession;
+  | DefaultEditorSession
+  | NewEditorSession
+  | ReadonlyEditorSession
+  | DeletedEditorSession;
 }) {
   const lastChangedTime = useRef<number>(0);
   const root = useRef<HTMLDivElement>(null);
