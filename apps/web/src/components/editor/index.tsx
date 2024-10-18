@@ -142,7 +142,7 @@ export default function TabsView() {
           flex: 1,
           overflow: "hidden",
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "row"
         }}
       >
         <PanelGroup direction="horizontal" autoSaveId={"editor-panels"}>

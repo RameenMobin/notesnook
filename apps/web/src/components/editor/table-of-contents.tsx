@@ -100,7 +100,7 @@ function TableOfContents(props: TableOfContentsProps) {
       initial={{ x: 600 }}
       sx={{
         display: "flex",
-        position: "absolute",
+        position: "sticky",
         right: 0,
         top: 37,
         zIndex: 999,
